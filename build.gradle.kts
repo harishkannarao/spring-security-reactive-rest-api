@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "com.harishkannarao"
-version = "0.0.1-SNAPSHOT"
+version = ""
 java.sourceCompatibility = JavaVersion.VERSION_17
 
 configurations {
@@ -30,4 +30,9 @@ dependencies {
 
 tasks.withType<Test> {
 	useJUnitPlatform()
+
+	testLogging.events = setOf(org.gradle.api.tasks.testing.logging.TestLogEvent.FAILED, org.gradle.api.tasks.testing.logging.TestLogEvent.SKIPPED, org.gradle.api.tasks.testing.logging.TestLogEvent.PASSED)
+
+	val properties = System.getProperties().entries.associate { it.key.toString() to it.value }
+	systemProperties(properties)
 }
