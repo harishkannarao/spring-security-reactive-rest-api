@@ -1,5 +1,6 @@
 plugins {
 	java
+	id("java-test-fixtures")
 	id("org.springframework.boot") version "3.0.2"
 	id("io.spring.dependency-management") version "1.1.0"
 }
@@ -19,13 +20,66 @@ repositories {
 }
 
 dependencies {
-	implementation("org.springframework.boot:spring-boot-starter-security")
+//	implementation("org.springframework.boot:spring-boot-starter-security")
 	implementation("org.springframework.boot:spring-boot-starter-webflux")
 	compileOnly("org.projectlombok:lombok")
 	annotationProcessor("org.projectlombok:lombok")
-	testImplementation("org.springframework.boot:spring-boot-starter-test")
-	testImplementation("io.projectreactor:reactor-test")
-	testImplementation("org.springframework.security:spring-security-test")
+
+	testFixturesImplementation("org.springframework.boot:spring-boot-starter-test")
+	testFixturesImplementation("io.projectreactor:reactor-test")
+	testFixturesImplementation("org.springframework.security:spring-security-test")
+	testFixturesImplementation("org.assertj:assertj-core")
+}
+
+testing {
+	suites {
+		val test by getting(JvmTestSuite::class) {
+			dependencies {
+				implementation("org.springframework.boot:spring-boot-starter-test")
+				implementation("io.projectreactor:reactor-test")
+				implementation("org.springframework.security:spring-security-test")
+				implementation("org.assertj:assertj-core")
+			}
+		}
+		val integrationTest by registering(JvmTestSuite::class) {
+			dependencies {
+				implementation(project())
+				implementation(testFixtures(project()))
+//				implementation("org.springframework.boot:spring-boot-starter-security")
+
+				implementation("org.springframework.boot:spring-boot-starter-test")
+				implementation("io.projectreactor:reactor-test")
+				implementation("org.springframework.security:spring-security-test")
+				implementation("org.assertj:assertj-core")
+			}
+			targets {
+				all {
+					testTask.configure {
+						mustRunAfter(test)
+					}
+				}
+			}
+		}
+		val ftIntegrationTest by registering(JvmTestSuite::class) {
+			dependencies {
+				implementation(project())
+				implementation(testFixtures(project()))
+//				implementation("org.springframework.boot:spring-boot-starter-security")
+
+				implementation("org.springframework.boot:spring-boot-starter-test")
+				implementation("io.projectreactor:reactor-test")
+				implementation("org.springframework.security:spring-security-test")
+				implementation("org.assertj:assertj-core")
+			}
+			targets {
+				all {
+					testTask.configure {
+						mustRunAfter(integrationTest)
+					}
+				}
+			}
+		}
+	}
 }
 
 tasks.withType<Test> {
@@ -35,4 +89,8 @@ tasks.withType<Test> {
 
 	val properties = System.getProperties().entries.associate { it.key.toString() to it.value }
 	systemProperties(properties)
+}
+
+tasks.named("check") {
+	dependsOn(testing.suites.named("integrationTest"), testing.suites.named("ftIntegrationTest"))
 }

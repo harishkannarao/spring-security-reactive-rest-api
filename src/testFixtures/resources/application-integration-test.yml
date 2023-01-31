@@ -1,0 +1,3 @@
+test:
+  application:
+    url: "http://localhost:${server.port}${spring.webflux.base-path}"
