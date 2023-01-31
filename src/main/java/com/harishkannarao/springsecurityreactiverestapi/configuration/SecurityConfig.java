@@ -40,9 +40,9 @@ public class SecurityConfig {
         return http.build();
     }
 
-    private void configureUrlAuthorization(ServerHttpSecurity.AuthorizeExchangeSpec authorizeExchangeSpec) {
-        authorizeExchangeSpec.pathMatchers("/general-data").permitAll();
-        authorizeExchangeSpec.anyExchange().denyAll();
+    private void configureUrlAuthorization(ServerHttpSecurity.AuthorizeExchangeSpec authExchange) {
+        authExchange.pathMatchers("/general-data").permitAll();
+        authExchange.anyExchange().denyAll();
     }
 
     @Bean
