@@ -1,5 +1,6 @@
 package com.harishkannarao.springsecurityreactiverestapi.configuration;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
@@ -9,7 +10,13 @@ import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.authentication.HttpStatusServerEntryPoint;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.reactive.CorsConfigurationSource;
+import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 import reactor.core.publisher.Mono;
+
+import java.util.List;
+import java.util.stream.Stream;
 
 @Configuration
 @EnableWebFluxSecurity
@@ -38,7 +45,7 @@ public class SecurityConfig {
         authorizeExchangeSpec.anyExchange().denyAll();
     }
 
-    /*@Bean
+    @Bean
     CorsConfigurationSource corsConfigurationSource(@Value("${cors.origin.patterns}") String originPatterns) {
         List<String> originPatternList = Stream.of(originPatterns.split(",")).toList();
         List<String> methods = List.of("GET", "PUT", "POST", "DELETE", "OPTIONS", "PATCH", "TRACE");
@@ -49,5 +56,5 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration(urlPattern, configuration);
         return source;
-    }*/
+    }
 }
