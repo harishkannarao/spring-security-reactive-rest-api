@@ -20,7 +20,7 @@ repositories {
 }
 
 dependencies {
-//	implementation("org.springframework.boot:spring-boot-starter-security")
+	implementation("org.springframework.boot:spring-boot-starter-security")
 	implementation("org.springframework.boot:spring-boot-starter-webflux")
 	compileOnly("org.projectlombok:lombok")
 	annotationProcessor("org.projectlombok:lombok")
@@ -45,7 +45,7 @@ testing {
 			dependencies {
 				implementation(project())
 				implementation(testFixtures(project()))
-//				implementation("org.springframework.boot:spring-boot-starter-security")
+				implementation("org.springframework.boot:spring-boot-starter-security")
 
 				implementation("org.springframework.boot:spring-boot-starter-test")
 				implementation("io.projectreactor:reactor-test")
@@ -64,7 +64,7 @@ testing {
 			dependencies {
 				implementation(project())
 				implementation(testFixtures(project()))
-//				implementation("org.springframework.boot:spring-boot-starter-security")
+				implementation("org.springframework.boot:spring-boot-starter-security")
 
 				implementation("org.springframework.boot:spring-boot-starter-test")
 				implementation("io.projectreactor:reactor-test")

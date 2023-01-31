@@ -1,20 +1,28 @@
 package com.harishkannarao.springsecurityreactiverestapi.configuration;
 
-//@Configuration
-//@EnableWebFluxSecurity
-//@EnableReactiveMethodSecurity
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
+import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
+import org.springframework.security.config.web.server.ServerHttpSecurity;
+import org.springframework.security.web.server.SecurityWebFilterChain;
+import org.springframework.security.web.server.authentication.HttpStatusServerEntryPoint;
+import reactor.core.publisher.Mono;
+
+@Configuration
+@EnableWebFluxSecurity
+@EnableReactiveMethodSecurity
 public class SecurityConfig {
 
-    /*@Bean
+    @Bean
     public SecurityWebFilterChain filterChain(ServerHttpSecurity http) throws Exception {
         http
-//                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .headers().hsts().and().and()
                 .cors().and()
                 .csrf().disable()
                 .authorizeExchange(this::configureUrlAuthorization)
                 .exceptionHandling()
-//                .accessDeniedHandler((request, response, accessDeniedException) -> response.setStatus(HttpStatus.FORBIDDEN.value()))
                 .accessDeniedHandler((exchange, denied) -> Mono.just(exchange.getResponse().setRawStatusCode(403)).then())
                 .authenticationEntryPoint(new HttpStatusServerEntryPoint(HttpStatus.UNAUTHORIZED))
                 .and()
@@ -26,8 +34,8 @@ public class SecurityConfig {
 
     private void configureUrlAuthorization(ServerHttpSecurity.AuthorizeExchangeSpec authorizeExchangeSpec) {
         authorizeExchangeSpec.pathMatchers("/general-data").permitAll();
-        authorizeExchangeSpec.anyExchange().permitAll();
-    }*/
+        authorizeExchangeSpec.anyExchange().denyAll();
+    }
 
     /*@Bean
     CorsConfigurationSource corsConfigurationSource(@Value("${cors.origin.patterns}") String originPatterns) {
