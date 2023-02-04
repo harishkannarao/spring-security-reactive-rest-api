@@ -1,5 +1,7 @@
 package com.harishkannarao.springsecurityreactiverestapi.configuration;
 
+import com.harishkannarao.springsecurityreactiverestapi.security.filter.CustomAuthenticationFilter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,6 +25,9 @@ import java.util.stream.Stream;
 @EnableReactiveMethodSecurity
 public class SecurityConfig {
 
+    @Autowired
+    private CustomAuthenticationFilter customAuthenticationFilter;
+
     @Bean
     public SecurityWebFilterChain filterChain(ServerHttpSecurity http) throws Exception {
         http
@@ -34,7 +39,7 @@ public class SecurityConfig {
                 .accessDeniedHandler((exchange, denied) -> Mono.just(exchange.getResponse().setRawStatusCode(403)).then())
                 .authenticationEntryPoint(new HttpStatusServerEntryPoint(HttpStatus.UNAUTHORIZED))
                 .and()
-                .addFilterBefore((exchange, chain) -> chain.filter(exchange), SecurityWebFiltersOrder.ANONYMOUS_AUTHENTICATION)
+                .addFilterBefore(customAuthenticationFilter, SecurityWebFiltersOrder.ANONYMOUS_AUTHENTICATION)
         ;
 
         return http.build();
@@ -42,6 +47,7 @@ public class SecurityConfig {
 
     private void configureUrlAuthorization(ServerHttpSecurity.AuthorizeExchangeSpec authExchange) {
         authExchange.pathMatchers("/general-data").permitAll();
+        authExchange.pathMatchers("/user-data").hasAuthority("ROLE_USER");
         authExchange.anyExchange().denyAll();
     }
 
