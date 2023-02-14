@@ -4,10 +4,11 @@ import com.harishkannarao.springsecurityreactiverestapi.domain.UserData;
 import com.harishkannarao.springsecurityreactiverestapi.security.helper.AuthenticationHelper;
 import com.harishkannarao.springsecurityreactiverestapi.security.resolver.UserDataResolver;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 @RestController
@@ -24,9 +25,13 @@ public class UserDataRestController {
     }
 
     @GetMapping
-    public ResponseEntity<Mono<UserData>> getUserData() {
+    public Mono<UserData> getUserData(ServerWebExchange serverWebExchange) {
+        serverWebExchange.getResponse().setStatusCode(HttpStatus.BAD_REQUEST);
         Mono<UserData> userData = authenticationHelper.getCurrentUsername()
                 .flatMap(userDataResolver::resolve);
-        return ResponseEntity.ok(userData);
+        return userData.map(value -> {
+            serverWebExchange.getResponse().setStatusCode(HttpStatus.OK);
+            return value;
+        });
     }
 }
