@@ -17,7 +17,10 @@ import org.springframework.web.cors.reactive.CorsConfigurationSource;
 import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 import reactor.core.publisher.Mono;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 @Configuration
@@ -28,8 +31,15 @@ public class SecurityConfig {
     @Autowired
     private CustomAuthenticationFilter customAuthenticationFilter;
 
+    @Autowired(required = false)
+    private List<Consumer<ServerHttpSecurity>> httpSecurityCustomizers;
+
     @Bean
-    public SecurityWebFilterChain filterChain(ServerHttpSecurity http) throws Exception {
+    public SecurityWebFilterChain filterChain(ServerHttpSecurity http) {
+        Optional.ofNullable(httpSecurityCustomizers)
+                .stream().flatMap(Collection::stream)
+                .forEach(httpSecurityConsumer -> httpSecurityConsumer.accept(http));
+
         http
                 .headers().hsts().and().and()
                 .cors().and()
