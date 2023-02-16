@@ -8,7 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ServerWebExchange;
+import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Mono;
 
 @RestController
@@ -25,13 +25,9 @@ public class UserDataRestController {
     }
 
     @GetMapping
-    public Mono<UserData> getUserData(ServerWebExchange serverWebExchange) {
-        serverWebExchange.getResponse().setStatusCode(HttpStatus.BAD_REQUEST);
+    public Mono<UserData> getUserData() {
         Mono<UserData> userData = authenticationHelper.getCurrentUsername()
                 .flatMap(userDataResolver::resolve);
-        return userData.map(value -> {
-            serverWebExchange.getResponse().setStatusCode(HttpStatus.OK);
-            return value;
-        });
+        return userData.switchIfEmpty(Mono.error(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST)));
     }
 }
