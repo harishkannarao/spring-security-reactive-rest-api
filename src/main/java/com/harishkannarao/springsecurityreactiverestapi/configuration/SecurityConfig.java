@@ -37,6 +37,9 @@ public class SecurityConfig {
     @Value("${feature.beta.enabled}")
     private boolean featureBetaEnabled;
 
+    @Value("${cors.origin.patterns}")
+    private String originPatterns;
+
     @Bean
     public SecurityWebFilterChain filterChain(ServerHttpSecurity http) {
         Optional.ofNullable(httpSecurityCustomizers)
@@ -44,14 +47,17 @@ public class SecurityConfig {
                 .forEach(httpSecurityConsumer -> httpSecurityConsumer.accept(http));
 
         http
-                .headers().hsts().and().and()
-                .cors().and()
-                .csrf().disable()
+                .headers(headers ->
+                        headers.hsts(hstsConfig -> hstsConfig.includeSubdomains(true)))
+                .cors(cors ->
+                        cors.configurationSource(corsConfigurationSource()))
+                .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .authorizeExchange(this::configureUrlAuthorization)
-                .exceptionHandling()
-                .accessDeniedHandler((exchange, denied) -> Mono.just(exchange.getResponse().setRawStatusCode(403)).then())
-                .authenticationEntryPoint(new HttpStatusServerEntryPoint(HttpStatus.UNAUTHORIZED))
-                .and()
+                .exceptionHandling(exceptionHandlingSpec -> {
+                    exceptionHandlingSpec.accessDeniedHandler((exchange, denied) ->
+                            Mono.just(exchange.getResponse().setRawStatusCode(403)).then());
+                    exceptionHandlingSpec.authenticationEntryPoint(new HttpStatusServerEntryPoint(HttpStatus.UNAUTHORIZED));
+                })
                 .addFilterBefore(customAuthenticationFilter, SecurityWebFiltersOrder.ANONYMOUS_AUTHENTICATION)
         ;
 
@@ -70,8 +76,7 @@ public class SecurityConfig {
         authExchange.anyExchange().denyAll();
     }
 
-    @Bean
-    CorsConfigurationSource corsConfigurationSource(@Value("${cors.origin.patterns}") String originPatterns) {
+    private CorsConfigurationSource corsConfigurationSource() {
         List<String> originPatternList = Stream.of(originPatterns.split(",")).toList();
         List<String> methods = List.of("GET", "PUT", "POST", "DELETE", "OPTIONS", "PATCH", "TRACE");
         String urlPattern = "/**";

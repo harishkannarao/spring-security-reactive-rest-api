@@ -6,8 +6,8 @@ This repository is to showcase Authentication and Role Base Access Control (RBAC
 [![Build Status](https://github.com/harishkannarao/spring-security-reactive-rest-api/actions/workflows/CI-main.yml/badge.svg)](https://github.com/harishkannarao/spring-security-reactive-rest-api/actions/workflows/CI-main.yml)
 
 ## Required Softwares, Tools and Version
-* Java JDK Version: 17
-* Gradle Version: 7
+* Java JDK Version: 21
+* Gradle Version: 8
 * Git Client: Any latest version
 
 ## Running the build
