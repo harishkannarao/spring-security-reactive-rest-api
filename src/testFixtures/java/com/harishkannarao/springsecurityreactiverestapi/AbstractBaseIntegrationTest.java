@@ -13,10 +13,9 @@ import org.springframework.test.util.TestSocketUtils;
 )
 abstract class AbstractBaseIntegrationTest {
 
-    private static final int RANDOM_SERVER_PORT = TestSocketUtils.findAvailableTcpPort();
-
     @DynamicPropertySource
     static void registerTestProperties(DynamicPropertyRegistry registry) {
+        final int RANDOM_SERVER_PORT = TestSocketUtils.findAvailableTcpPort();
         registry.add("server.port", () -> String.valueOf(RANDOM_SERVER_PORT));
     }
 
