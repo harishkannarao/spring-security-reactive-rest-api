@@ -1,6 +1,9 @@
 spring:
   webflux:
     base-path: '/spring-security-reactive-rest-api'
+  threads:
+    virtual:
+      enabled: true
 
 feature:
   beta:
