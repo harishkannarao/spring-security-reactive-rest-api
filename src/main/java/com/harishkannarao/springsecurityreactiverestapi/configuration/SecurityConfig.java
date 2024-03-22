@@ -67,7 +67,7 @@ public class SecurityConfig {
     private void configureUrlAuthorization(ServerHttpSecurity.AuthorizeExchangeSpec authExchange) {
         authExchange.pathMatchers("/general-data").permitAll();
         authExchange.pathMatchers("/user-data").hasAuthority("ROLE_USER");
-        authExchange.pathMatchers("/admin/**").authenticated();
+        authExchange.pathMatchers("/admin/**").permitAll();
 
         if (featureBetaEnabled) {
             authExchange.pathMatchers("/beta/user-data").hasAuthority("ROLE_USER");
