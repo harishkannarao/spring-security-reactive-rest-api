@@ -59,4 +59,25 @@ public class AdminRestControllerIntegrationTest extends AbstractBaseIntegrationT
 
         assertThat(result.getStatusCode().value()).isEqualTo(403);
     }
+
+    @Test
+    public void test_getSensitiveData_returns401_forInvalidAuthentication() {
+        HttpHeaders requestHeaders = new HttpHeaders();
+        requestHeaders.setBearerAuth("invalid-token");
+        HttpEntity<Void> requestEntity = new HttpEntity<>(requestHeaders);
+        ResponseEntity<Void> result = testRestTemplate
+                .exchange("/admin/get-sensitive-data/{username}", HttpMethod.GET, requestEntity, Void.class, Map.of("username", "user-name-1"));
+
+        assertThat(result.getStatusCode().value()).isEqualTo(401);
+    }
+
+    @Test
+    public void test_getSensitiveData_returns401_forMissingAuthentication() {
+        HttpHeaders requestHeaders = new HttpHeaders();
+        HttpEntity<Void> requestEntity = new HttpEntity<>(requestHeaders);
+        ResponseEntity<Void> result = testRestTemplate
+                .exchange("/admin/get-sensitive-data/{username}", HttpMethod.GET, requestEntity, Void.class, Map.of("username", "user-name-1"));
+
+        assertThat(result.getStatusCode().value()).isEqualTo(401);
+    }
 }
