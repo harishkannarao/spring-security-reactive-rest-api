@@ -1,9 +1,10 @@
 plugins {
 	java
 	id("java-test-fixtures")
-	id("org.springframework.boot") version "3.2.2"
-	id("io.spring.dependency-management") version "1.1.4"
+	id("org.springframework.boot") version "3.4.4"
 }
+
+apply(plugin = "io.spring.dependency-management")
 
 group = "com.harishkannarao"
 version = ""
