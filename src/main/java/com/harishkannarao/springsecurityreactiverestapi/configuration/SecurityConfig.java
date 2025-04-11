@@ -65,6 +65,10 @@ public class SecurityConfig {
     }
 
     private void configureUrlAuthorization(ServerHttpSecurity.AuthorizeExchangeSpec authExchange) {
+        // this /error mapping is required to return 400 or 500 or other statuses.
+        // otherwise 401 is returned for all errors
+        authExchange.pathMatchers("/error").permitAll();
+
         authExchange.pathMatchers("/general-data").permitAll();
         authExchange.pathMatchers("/user-data").hasAuthority("ROLE_USER");
         authExchange.pathMatchers("/admin/**").permitAll();
