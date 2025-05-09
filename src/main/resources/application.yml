@@ -12,3 +12,13 @@ feature:
 cors:
   origin:
     patterns: "https://example.com,http://example.com,https://*.example.com,http://*.example.com"
+
+logging:
+  level:
+    org:
+      springframework:
+        boot:
+          autoconfigure:
+            security:
+              reactive:
+                ReactiveUserDetailsServiceAutoConfiguration: OFF
